@@ -1,0 +1,6 @@
+{
+  "name": "E-Zelver API",
+  "description": "",
+  "image": "heroku/gradle",
+  "addons": ["heroku-postgresql"]
+}

@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version "${springBootVersion}"
+}
+
+group projectGroup
+version projectVersion
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion
+
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.4'
+
+    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '2.3.3'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.6'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.8.2'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.5.1'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.5.1'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
+
+    testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+    testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+}
+
+test {
+    useJUnitPlatform()
+}
