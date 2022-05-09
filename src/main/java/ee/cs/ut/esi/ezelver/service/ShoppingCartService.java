@@ -1,6 +1,7 @@
 package ee.cs.ut.esi.ezelver.service;
 
 import ee.cs.ut.esi.ezelver.auth.AuthenticationService;
+import ee.cs.ut.esi.ezelver.model.Customer;
 import ee.cs.ut.esi.ezelver.model.ProductEntry;
 import ee.cs.ut.esi.ezelver.model.ShoppingCart;
 import ee.cs.ut.esi.ezelver.model.ShoppingCartItem;
@@ -17,12 +18,14 @@ import java.util.List;
 public class ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartItemRepository shoppingCartItemRepository;
+    private final CustomerService customerService;
     private final DigitalStoreService digitalStoreService;
     private final FinancialService financialService;
     private final AuthenticationService authenticationService;
 
     public ShoppingCart createShoppingCart() {
-        ShoppingCart shoppingCart = new ShoppingCart(authenticationService.getCustomerId(), 0);
+        Customer customer = customerService.fetchCustomerById(authenticationService.getCustomerId());
+        ShoppingCart shoppingCart = new ShoppingCart(customer, 0);
         return shoppingCartRepository.save(shoppingCart);
     }
 

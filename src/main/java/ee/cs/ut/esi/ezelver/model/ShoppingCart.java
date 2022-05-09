@@ -21,8 +21,8 @@ public class ShoppingCart {
     @Column(name = "amount")
     private int amount;
 
-    public ShoppingCart(int customerId, int amount) {
-        this.customerId = customerId;
+    public ShoppingCart(Customer customer, int amount) {
+        this.customer = customer;
         this.amount = amount;
     }
 
