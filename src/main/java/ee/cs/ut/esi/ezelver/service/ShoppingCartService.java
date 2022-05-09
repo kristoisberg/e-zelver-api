@@ -28,15 +28,11 @@ public class ShoppingCartService {
         Customer customer = customerService.fetchCustomerById(authenticationService.getCustomerId());
         ShoppingCart shoppingCart = new ShoppingCart(customer, 0);
         ShoppingCart result = shoppingCartRepository.save(shoppingCart);
-        result.getCustomer().setShoppingCarts(null);
-        result.getItems().forEach(item -> item.setShoppingCart(null));
         return result;
     }
 
     public ShoppingCart getShoppingCartById(int shoppingCartId) {
         ShoppingCart result = shoppingCartRepository.getById(shoppingCartId);
-        result.getCustomer().setShoppingCarts(null);
-        result.getItems().forEach(item -> item.setShoppingCart(null));
         return result;
     }
 
@@ -74,7 +70,7 @@ public class ShoppingCartService {
         }
 
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
-        return customerId.equals(shoppingCart.getCustomerId());
+        return customerId.equals(shoppingCart.getCustomer().getId());
     }
 
     /*private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {
