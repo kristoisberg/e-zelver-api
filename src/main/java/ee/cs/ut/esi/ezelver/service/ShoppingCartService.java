@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CartService {
+public class ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartItemRepository shoppingCartItemRepository;
     private final DigitalStoreService digitalStoreService;
@@ -24,18 +24,22 @@ public class CartService {
         return shoppingCartRepository.save(shoppingCart);
     }
 
+    public ShoppingCart getShoppingCartById(int shoppingCartId) {
+        return shoppingCartRepository.getById(shoppingCartId);
+    }
+
     public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) {
         return shoppingCartItemRepository.findByShoppingCartId(shoppingCartId);
     }
 
-    public ShoppingCartItem addItem(int shoppingCartId, int productEntryId, int quantity) {
+    public ShoppingCart addItem(int shoppingCartId, int productEntryId, int quantity) {
         ShoppingCartItem shoppingCartItem = new ShoppingCartItem(shoppingCartId, productEntryId, quantity);
         ShoppingCartItem result = shoppingCartItemRepository.save(shoppingCartItem);
 
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
         shoppingCart.getItems().add(result);
         calculateShoppingCartAmount(shoppingCart);
-        return result;
+        return shoppingCart;
     }
 
     public void purchase(int shoppingCartId, String deliveryLocation) {
