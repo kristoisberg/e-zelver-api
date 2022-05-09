@@ -17,7 +17,7 @@ public class WarehouseService {
     }
 
     public List<ProductEntry> fetchAllAvailableProducts() {
-        return productEntryRepository.findByAvailableTrue();
+        return productEntryRepository.findByQuantityGreaterThan(0);
     }
 
     public ProductEntry fetchProductById(int productId) {
