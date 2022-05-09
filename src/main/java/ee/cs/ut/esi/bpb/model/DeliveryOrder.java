@@ -17,6 +17,9 @@ public class DeliveryOrder {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "refunded")
+    private boolean refunded = false;
+
     public DeliveryOrder() {
     }
 
@@ -27,10 +30,6 @@ public class DeliveryOrder {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Date getDate() {
@@ -47,5 +46,14 @@ public class DeliveryOrder {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isRefunded() {
+        return refunded;
+    }
+
+    public DeliveryOrder setRefunded(boolean refunded) {
+        this.refunded = refunded;
+        return this;
     }
 }

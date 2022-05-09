@@ -3,5 +3,11 @@ package ee.cs.ut.esi.bpb.repository;
 import ee.cs.ut.esi.bpb.model.Delivery;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
+import java.util.List;
+import java.util.Optional;
+
+public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
+    Optional<Delivery> findById(int id);
+
+    List<Delivery> findAll();
 }

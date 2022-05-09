@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface DeliveryCustomerRepository extends JpaRepository<DeliveryCustomer, Long> {
-    Optional<DeliveryCustomer> findById(long id);
-    Optional<DeliveryCustomer> findByEmail(String email);
+public interface DeliveryCustomerRepository extends JpaRepository<DeliveryCustomer, Integer> {
+    Optional<DeliveryCustomer> findById(int id);
+
     List<DeliveryCustomer> findAll();
 }
