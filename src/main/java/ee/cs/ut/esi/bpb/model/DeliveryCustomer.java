@@ -1,21 +1,33 @@
 package ee.cs.ut.esi.bpb.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "delivery_customer")
 public class DeliveryCustomer {
 
+    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "customer_id")
     private int id;
+
+    @NotNull
     @Column(name = "name")
     private String name;
+
+    @Email
+    @NotNull
     @Column(name = "email")
     private String email;
+
+    @NotNull
     @Column(name = "phone")
     private String phone; //this is not an int, fight me
+
+    @NotNull
     @Column(name = "address")
     private String address;
 
