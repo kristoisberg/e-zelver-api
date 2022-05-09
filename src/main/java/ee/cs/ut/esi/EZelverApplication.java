@@ -1,4 +1,4 @@
-package ee.cs.ut.esi.ezelver;
+package ee.cs.ut.esi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,25 +1,23 @@
-package ee.cs.ut.esi.ezelver.entities;
+package ee.cs.ut.esi.bpb.entities;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ezelver_customer")
-public class Customer {
+@Table(name = "delivery_driver")
+public class DeliveryDriver {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "customer_id")
+    @Column(name = "driver_id")
     private int id;
     @Column(name = "name")
     private String name;
-    @Column(name = "age")
-    private int age;
 
-    public Customer(String name, int age) {
+    public DeliveryDriver(String name) {
         this.name = name;
-        this.age = age;
     }
 
-    public Customer() {
+    public DeliveryDriver() {
     }
 
     public int getId() {
@@ -36,13 +34,5 @@ public class Customer {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 }

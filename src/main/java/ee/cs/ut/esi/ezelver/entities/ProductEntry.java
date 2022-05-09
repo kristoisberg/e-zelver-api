@@ -2,7 +2,7 @@ package ee.cs.ut.esi.ezelver.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "productEntry")
+@Table(name = "ezelver_product_entry")
 public class ProductEntry {
 
     @Id
