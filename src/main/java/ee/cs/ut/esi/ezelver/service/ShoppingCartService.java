@@ -50,9 +50,8 @@ public class ShoppingCartService {
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
         ProductEntry productEntry = warehouseService.fetchProductById(productEntryId);
         ShoppingCartItem shoppingCartItem = new ShoppingCartItem(shoppingCart, productEntry, quantity);
-        ShoppingCartItem result = shoppingCartItemRepository.save(shoppingCartItem);
+        shoppingCartItemRepository.save(shoppingCartItem);
 
-        shoppingCart.getItems().add(result);
         //calculateShoppingCartAmount(shoppingCart);
         shoppingCart.getCustomer().setShoppingCarts(null);
         shoppingCart.getItems().forEach(item -> item.setShoppingCart(null));
