@@ -61,7 +61,8 @@ public class ShoppingCartService {
         //calculateShoppingCartAmount(shoppingCart);
         String status = deliveryOrderService.getStatus(shoppingCart);
         int deliveryPrice = deliveryOrderService.getDeliveryPrice(shoppingCart);
-        digitalStoreService.createOrder(status, deliveryLocation, deliveryPrice, new Date());
+        Date deliveryDate = deliveryOrderService.getDeliveryDate();
+        digitalStoreService.createOrder(status, deliveryLocation, deliveryPrice, deliveryDate);
         financialService.createPayment(shoppingCart.getAmount());
     }
 

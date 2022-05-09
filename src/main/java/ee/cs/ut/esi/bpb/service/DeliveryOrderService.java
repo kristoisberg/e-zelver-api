@@ -8,6 +8,7 @@ import ee.cs.ut.esi.ezelver.model.ShoppingCart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,8 @@ public class DeliveryOrderService {
     public int getDeliveryPrice(ShoppingCart shoppingCart) {
         return shoppingCart.getItems().size();
     }
-
+    public Date getDeliveryDate() {
+        return new Date();
+    }
 
 }
