@@ -80,4 +80,16 @@ public class Delivery {
     public void setDeliveryDetails(String deliveryDetails) {
         this.deliveryDetails = deliveryDetails;
     }
+
+    public Delivery updateDateAndAddress(Date date, String address) {
+        this.deliveryDate = date;
+        this.deliveryAddress = address;
+        return this;
+    }
+
+    public Delivery updatePickupDateAndAddress(Date date, String address) {
+        this.pickupDate = date;
+        this.pickupAddress = address;
+        return this;
+    }
 }

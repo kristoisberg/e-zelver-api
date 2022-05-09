@@ -7,6 +7,7 @@ import ee.cs.ut.esi.bpb.repository.DeliveryRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +25,20 @@ public class DeliveryService {
         return deliveryRepo.findAll();
     }
 
+    public List<Delivery> fetchAllDeliveriesByDate(Date date) {
+        return deliveryRepo.findAllByDate(date);
+    }
+
     public Delivery createDelivery(Delivery delivery) {
         return deliveryRepo.save(delivery);
+    }
+
+    public Delivery updateDelivery(Delivery delivery, Date date, String address) {
+        return delivery.updateDateAndAddress(date, address);
+    }
+
+    public Delivery updateDeliveryPickup(Delivery delivery, Date date, String address) {
+        return delivery.updatePickupDateAndAddress(date, address);
     }
 
 }

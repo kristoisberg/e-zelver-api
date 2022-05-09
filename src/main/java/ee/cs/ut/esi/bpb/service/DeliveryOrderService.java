@@ -1,5 +1,6 @@
 package ee.cs.ut.esi.bpb.service;
 
+import ee.cs.ut.esi.bpb.model.DeliveryInvoice;
 import ee.cs.ut.esi.bpb.model.DeliveryOrder;
 import ee.cs.ut.esi.bpb.model.DeliveryPayment;
 import ee.cs.ut.esi.bpb.repository.DeliveryOrderRepository;
@@ -14,6 +15,8 @@ public class DeliveryOrderService {
 
     @Autowired
     private DeliveryOrderRepository deliveryOrderRepo;
+    @Autowired
+    private DeliveryInvoiceService deliveryInvoiceService;
 
     public Optional<DeliveryOrder> fetchOrderById(int id) {
         return deliveryOrderRepo.findById(id);
@@ -26,6 +29,5 @@ public class DeliveryOrderService {
     public DeliveryOrder createOrder(DeliveryOrder order) {
         return deliveryOrderRepo.save(order);
     }
-
 
 }
