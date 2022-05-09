@@ -1,5 +1,7 @@
 package ee.cs.ut.esi.ezelver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,18 +13,17 @@ public class ShoppingCart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "cart_id")
     private int id;
-    @Column(name = "customer_id", insertable = false, updatable = false)
-    private int customerId;
     @ManyToOne
     @JoinColumn(name="customer_id", nullable = false)
+    @JsonIgnoreProperties({"shoppingCarts", "hibernateLazyInitializer"})
     private Customer customer;
     @OneToMany(mappedBy = "shoppingCart")
     private List<ShoppingCartItem> items;
     @Column(name = "amount")
     private int amount;
 
-    public ShoppingCart(int customerId, int amount) {
-        this.customerId = customerId;
+    public ShoppingCart(Customer customer, int amount) {
+        this.customer = customer;
         this.amount = amount;
     }
 
@@ -35,14 +36,6 @@ public class ShoppingCart {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
     }
 
     public Customer getCustomer() {

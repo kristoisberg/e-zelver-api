@@ -2,6 +2,7 @@ package ee.cs.ut.esi.ezelver.service;
 
 import ee.cs.ut.esi.bpb.service.DeliveryOrderService;
 import ee.cs.ut.esi.ezelver.auth.AuthenticationService;
+import ee.cs.ut.esi.ezelver.model.Customer;
 import ee.cs.ut.esi.ezelver.model.ProductEntry;
 import ee.cs.ut.esi.ezelver.model.ShoppingCart;
 import ee.cs.ut.esi.ezelver.model.ShoppingCartItem;
@@ -18,37 +19,46 @@ import java.util.List;
 public class ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartItemRepository shoppingCartItemRepository;
+    private final CustomerService customerService;
     private final DigitalStoreService digitalStoreService;
     private final FinancialService financialService;
+    private final WarehouseService warehouseService;
     private final AuthenticationService authenticationService;
     private final DeliveryOrderService deliveryOrderService;
 
     public ShoppingCart createShoppingCart() {
-        ShoppingCart shoppingCart = new ShoppingCart(authenticationService.getCustomerId(), 0);
-        return shoppingCartRepository.save(shoppingCart);
+        Customer customer = customerService.fetchCustomerById(authenticationService.getCustomerId());
+        ShoppingCart shoppingCart = new ShoppingCart(customer, 0);
+        ShoppingCart result = shoppingCartRepository.save(shoppingCart);
+        return result;
     }
 
     public ShoppingCart getShoppingCartById(int shoppingCartId) {
-        return shoppingCartRepository.getById(shoppingCartId);
+        ShoppingCart result = shoppingCartRepository.getById(shoppingCartId);
+        return result;
     }
 
     public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) {
-        return shoppingCartItemRepository.findByShoppingCartId(shoppingCartId);
+        List<ShoppingCartItem> result = shoppingCartItemRepository.findByShoppingCartId(shoppingCartId);
+        result.forEach(item -> item.setShoppingCart(null));
+        return result;
     }
 
     public ShoppingCart addItem(int shoppingCartId, int productEntryId, int quantity) {
-        ShoppingCartItem shoppingCartItem = new ShoppingCartItem(shoppingCartId, productEntryId, quantity);
-        ShoppingCartItem result = shoppingCartItemRepository.save(shoppingCartItem);
-
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
-        shoppingCart.getItems().add(result);
-        calculateShoppingCartAmount(shoppingCart);
+        ProductEntry productEntry = warehouseService.fetchProductById(productEntryId);
+        ShoppingCartItem shoppingCartItem = new ShoppingCartItem(shoppingCart, productEntry, quantity);
+        shoppingCartItemRepository.save(shoppingCartItem);
+
+        //calculateShoppingCartAmount(shoppingCart);
+        shoppingCart.getCustomer().setShoppingCarts(null);
+        shoppingCart.getItems().forEach(item -> item.setShoppingCart(null));
         return shoppingCart;
     }
 
     public void purchase(int shoppingCartId, String deliveryLocation) {
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
-        calculateShoppingCartAmount(shoppingCart);
+        //calculateShoppingCartAmount(shoppingCart);
         String status = deliveryOrderService.getStatus(shoppingCart);
         int deliveryPrice = deliveryOrderService.getDeliveryPrice(shoppingCart);
         digitalStoreService.createOrder(status, deliveryLocation, deliveryPrice, new Date());
@@ -62,14 +72,14 @@ public class ShoppingCartService {
         }
 
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
-        return customerId.equals(shoppingCart.getCustomerId());
+        return customerId.equals(shoppingCart.getCustomer().getId());
     }
 
-    private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {
+    /*private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {
         int amount = shoppingCart.getItems().stream()
                 .map(ShoppingCartItem::getProductEntry)
                 .map(ProductEntry::getId) // todo: tegelikult peaks amount olema?
                 .reduce(0, Integer::sum);
         shoppingCart.setAmount(amount);
-    }
+    }*/
 }
