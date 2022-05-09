@@ -7,7 +7,7 @@ public class ProductEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_id")
+    @Column(name = "product_entry_id")
     private int id;
     @Column(name = "quantity")
     private int quantity;

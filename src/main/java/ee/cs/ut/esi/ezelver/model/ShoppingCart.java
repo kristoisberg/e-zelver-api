@@ -11,7 +11,7 @@ public class ShoppingCart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "cart_id")
     private int id;
-    @Column(name = "customer_id")
+    @Column(name = "customer_id", insertable = false, updatable = false)
     private int customerId;
     @ManyToOne
     @JoinColumn(name="customer_id", nullable = false)

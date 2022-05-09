@@ -10,12 +10,12 @@ public class ShoppingCartItem {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "cartItem_id")
     private int id;
-    @Column(name = "cart_id")
+    @Column(name = "cart_id", insertable = false, updatable = false)
     private int shoppingCartId;
     @ManyToOne
     @JoinColumn(name="cart_id", nullable = false)
     private ShoppingCart shoppingCart;
-    @Column(name = "product_entry_id")
+    @Column(name = "product_entry_id", insertable = false, updatable = false)
     private int productEntryId;
     @ManyToOne
     @JoinColumn(name = "product_entry_id", nullable = false)
