@@ -27,4 +27,8 @@ public class WarehouseService {
     public List<ProductEntry> fetchProductsByType(String productType) {
        return productEntryRepository.findByType(productType);
     }
+    public ProductEntry addProduct(ProductEntry product) {
+        return productEntryRepository.save(product);
+    }
+
 }
