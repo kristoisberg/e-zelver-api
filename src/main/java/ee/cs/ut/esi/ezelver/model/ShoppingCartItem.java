@@ -10,13 +10,25 @@ public class ShoppingCartItem {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "cartItem_id")
     private int id;
+    @Column(name = "cart_id")
+    private int shoppingCartId;
+    @ManyToOne
+    @JoinColumn(name="cart_id", nullable = false)
+    private ShoppingCart shoppingCart;
+    @Column(name = "product_entry_id")
+    private int productEntryId;
+    @ManyToOne
+    @JoinColumn(name = "product_entry_id", nullable = false)
+    private ProductEntry productEntry;
     @Column(name = "quantity")
     private int quantity;
 
     public ShoppingCartItem() {
     }
 
-    public ShoppingCartItem(int quantity) {
+    public ShoppingCartItem(int shoppingCartId, int productEntryId, int quantity) {
+        this.shoppingCartId = shoppingCartId;
+        this.productEntryId = productEntryId;
         this.quantity = quantity;
     }
 
@@ -26,6 +38,38 @@ public class ShoppingCartItem {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getShoppingCartId() {
+        return shoppingCartId;
+    }
+
+    public void setShoppingCartId(int shoppingCartId) {
+        this.shoppingCartId = shoppingCartId;
+    }
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+
+    public void setShoppingCart(ShoppingCart shoppingCart) {
+        this.shoppingCart = shoppingCart;
+    }
+
+    public int getProductEntryId() {
+        return productEntryId;
+    }
+
+    public void setProductEntryId(int productEntryId) {
+        this.productEntryId = productEntryId;
+    }
+
+    public ProductEntry getProductEntry() {
+        return productEntry;
+    }
+
+    public void setProductEntry(ProductEntry productEntry) {
+        this.productEntry = productEntry;
     }
 
     public int getQuantity() {

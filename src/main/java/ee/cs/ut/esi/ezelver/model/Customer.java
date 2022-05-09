@@ -1,5 +1,6 @@
 package ee.cs.ut.esi.ezelver.model;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "ezelver_customer")
@@ -9,6 +10,8 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "customer_id")
     private int id;
+    @OneToMany(mappedBy = "customer")
+    private List<ShoppingCart> shoppingCarts;
     @Column(name = "name")
     private String name;
     @Column(name = "age")
@@ -28,6 +31,14 @@ public class Customer {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public List<ShoppingCart> getShoppingCarts() {
+        return shoppingCarts;
+    }
+
+    public void setShoppingCarts(List<ShoppingCart> shoppingCarts) {
+        this.shoppingCarts = shoppingCarts;
     }
 
     public String getName() {
