@@ -1,5 +1,6 @@
 package ee.cs.ut.esi.ezelver.service;
 
+import ee.cs.ut.esi.bpb.service.DeliveryOrderService;
 import ee.cs.ut.esi.ezelver.auth.AuthenticationService;
 import ee.cs.ut.esi.ezelver.model.ProductEntry;
 import ee.cs.ut.esi.ezelver.model.ShoppingCart;
@@ -20,6 +21,7 @@ public class ShoppingCartService {
     private final DigitalStoreService digitalStoreService;
     private final FinancialService financialService;
     private final AuthenticationService authenticationService;
+    private final DeliveryOrderService deliveryOrderService;
 
     public ShoppingCart createShoppingCart() {
         ShoppingCart shoppingCart = new ShoppingCart(authenticationService.getCustomerId(), 0);
@@ -47,8 +49,9 @@ public class ShoppingCartService {
     public void purchase(int shoppingCartId, String deliveryLocation) {
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
         calculateShoppingCartAmount(shoppingCart);
-        // todo: BPB stuff
-        digitalStoreService.createOrder("BPB", deliveryLocation, 420, new Date()); // todo status, price, date
+        String status = deliveryOrderService.getStatus(shoppingCart);
+        int deliveryPrice = deliveryOrderService.getDeliveryPrice(shoppingCart);
+        digitalStoreService.createOrder(status, deliveryLocation, deliveryPrice, new Date());
         financialService.createPayment(shoppingCart.getAmount());
     }
 
