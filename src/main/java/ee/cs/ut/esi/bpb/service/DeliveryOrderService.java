@@ -1,6 +1,7 @@
 package ee.cs.ut.esi.bpb.service;
 
 import ee.cs.ut.esi.bpb.model.DeliveryOrder;
+import ee.cs.ut.esi.bpb.model.DeliveryPayment;
 import ee.cs.ut.esi.bpb.repository.DeliveryOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,10 @@ public class DeliveryOrderService {
     public List<DeliveryOrder> fetchAllOrders() {
         return deliveryOrderRepo.findAll();
     }
+
+    public DeliveryOrder createOrder(DeliveryOrder order) {
+        return deliveryOrderRepo.save(order);
+    }
+
 
 }
