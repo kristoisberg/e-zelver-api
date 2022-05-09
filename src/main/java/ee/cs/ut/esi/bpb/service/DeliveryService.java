@@ -1,9 +1,7 @@
 package ee.cs.ut.esi.bpb.service;
 
 import ee.cs.ut.esi.bpb.model.Delivery;
-import ee.cs.ut.esi.bpb.model.DeliveryRequest;
 import ee.cs.ut.esi.bpb.repository.DeliveryRepository;
-import ee.cs.ut.esi.bpb.repository.DeliveryRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +24,7 @@ public class DeliveryService {
     }
 
     public List<Delivery> fetchAllDeliveriesByDate(Date date) {
-        return deliveryRepo.findAllByDate(date);
+        return deliveryRepo.findAllByDeliveryDate(date);
     }
 
     public Delivery createDelivery(Delivery delivery) {

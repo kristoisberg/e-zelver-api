@@ -12,6 +12,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
 
     List<Delivery> findAll();
 
-    List<Delivery> findAllByDate(Date date);
+    List<Delivery> findAllByDeliveryDate(Date date);
 
 }
