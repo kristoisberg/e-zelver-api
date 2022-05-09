@@ -4,10 +4,8 @@ import ee.cs.ut.esi.ezelver.model.ProductEntry;
 import ee.cs.ut.esi.ezelver.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +33,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductEntry> fetchAllAvailableProducts(@PathVariable int id) {
         return ResponseEntity.ok(warehouseService.fetchProductById(id));
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
+    public ResponseEntity<ProductEntry> addProduct(@RequestBody ProductEntry product) {
+        return ResponseEntity.ok(warehouseService.addProduct(product));
     }
 }

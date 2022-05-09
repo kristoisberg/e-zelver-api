@@ -12,14 +12,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/api/login")
+    @PostMapping("/api/customers/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto request) {
         return ResponseEntity.ok(new AuthResponseDto(authService.login(request.getName())));
     }
 
-    @PostMapping("/api/register")
+    @PostMapping("/api/customers/register")
     public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterRequestDto request) {
         return ResponseEntity.ok(new AuthResponseDto(authService.register(request.getName(), request.getAge())));
+    }
+
+    @PostMapping("/api/employees/login")
+    public ResponseEntity<AuthResponseDto> loginEmployee(@RequestBody LoginRequestDto request) {
+        return ResponseEntity.ok(new AuthResponseDto(authService.loginEmployee(request.getName())));
+    }
+
+    @PostMapping("/api/employees/register")
+    public ResponseEntity<AuthResponseDto> registerEmployee(@RequestBody RegisterEmployeeRequestDto request) {
+        return ResponseEntity.ok(new AuthResponseDto(authService.registerEmployee(request.getName(), request.getPosition())));
     }
 
     @NoArgsConstructor
@@ -35,6 +45,14 @@ public class AuthController {
     static class RegisterRequestDto {
         private String name;
         private int age;
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    static class RegisterEmployeeRequestDto {
+        private String name;
+        private String position;
     }
 
     @NoArgsConstructor
