@@ -35,7 +35,7 @@ public class ProductController {
         return ResponseEntity.ok(warehouseService.fetchProductById(id));
     }
 
-    @GetMapping("/add")
+    @PostMapping
     @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
     public ResponseEntity<ProductEntry> addProduct(@RequestBody ProductEntry product) {
         return ResponseEntity.ok(warehouseService.addProduct(product));
