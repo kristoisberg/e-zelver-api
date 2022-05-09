@@ -1,7 +1,6 @@
-package ee.cs.ut.esi.bpb.entities;
+package ee.cs.ut.esi.bpb.model;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "delivery_history")

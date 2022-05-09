@@ -1,4 +1,4 @@
-package ee.cs.ut.esi.ezelver.entities;
+package ee.cs.ut.esi.ezelver.model;
 
 import javax.persistence.*;
 

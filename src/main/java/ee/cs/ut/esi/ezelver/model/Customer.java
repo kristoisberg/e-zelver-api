@@ -1,27 +1,25 @@
-package ee.cs.ut.esi.ezelver.entities;
-
+package ee.cs.ut.esi.ezelver.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ezelver_employee")
-public class Employee {
+@Table(name = "ezelver_customer")
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "employee_id")
+    @Column(name = "customer_id")
     private int id;
     @Column(name = "name")
     private String name;
-    @Column(name = "position")
-    private String position;
+    @Column(name = "age")
+    private int age;
 
-    public Employee(String name, String position) {
+    public Customer(String name, int age) {
         this.name = name;
-        this.position = position;
+        this.age = age;
     }
 
-    public Employee() {
-
+    public Customer() {
     }
 
     public int getId() {
@@ -40,11 +38,11 @@ public class Employee {
         this.name = name;
     }
 
-    public String getPosition() {
-        return position;
+    public int getAge() {
+        return age;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setAge(int age) {
+        this.age = age;
     }
 }
