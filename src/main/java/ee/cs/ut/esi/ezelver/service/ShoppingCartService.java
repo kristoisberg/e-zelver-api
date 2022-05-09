@@ -1,5 +1,6 @@
 package ee.cs.ut.esi.ezelver.service;
 
+import ee.cs.ut.esi.ezelver.auth.AuthenticationService;
 import ee.cs.ut.esi.ezelver.model.ProductEntry;
 import ee.cs.ut.esi.ezelver.model.ShoppingCart;
 import ee.cs.ut.esi.ezelver.model.ShoppingCartItem;
@@ -18,9 +19,10 @@ public class ShoppingCartService {
     private final ShoppingCartItemRepository shoppingCartItemRepository;
     private final DigitalStoreService digitalStoreService;
     private final FinancialService financialService;
+    private final AuthenticationService authenticationService;
 
-    public ShoppingCart createShoppingCart(int customerId) {
-        ShoppingCart shoppingCart = new ShoppingCart(customerId, 0);
+    public ShoppingCart createShoppingCart() {
+        ShoppingCart shoppingCart = new ShoppingCart(authenticationService.getCustomerId(), 0);
         return shoppingCartRepository.save(shoppingCart);
     }
 
@@ -48,6 +50,16 @@ public class ShoppingCartService {
         // todo: BPB stuff
         digitalStoreService.createOrder("BPB", deliveryLocation, 420, new Date()); // todo status, price, date
         financialService.createPayment(shoppingCart.getAmount());
+    }
+
+    public boolean canAccessShoppingCart(int shoppingCartId) {
+        Integer customerId = authenticationService.getCustomerId();
+        if (customerId == null) {
+            return false;
+        }
+
+        ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
+        return customerId.equals(shoppingCart.getCustomerId());
     }
 
     private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {

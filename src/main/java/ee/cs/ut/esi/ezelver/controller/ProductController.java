@@ -5,6 +5,7 @@ import ee.cs.ut.esi.ezelver.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,12 +28,12 @@ public class ProductController {
     }
 
     @GetMapping("/type/{type}")
-    public ResponseEntity<List<ProductEntry>> fetchAllAvailableProducts(String type) {
+    public ResponseEntity<List<ProductEntry>> fetchAllAvailableProducts(@PathVariable String type) {
         return ResponseEntity.ok(warehouseService.fetchProductsByType(type));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductEntry> fetchAllAvailableProducts(int id) {
+    public ResponseEntity<ProductEntry> fetchAllAvailableProducts(@PathVariable int id) {
         return ResponseEntity.ok(warehouseService.fetchProductById(id));
     }
 }
