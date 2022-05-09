@@ -15,7 +15,7 @@ public class ShoppingCart {
     private int id;
     @ManyToOne
     @JoinColumn(name="customer_id", nullable = false)
-    @JsonIgnoreProperties({"shoppingCarts"})
+    @JsonIgnoreProperties({"shoppingCarts", "hibernateLazyInitializer"})
     private Customer customer;
     @OneToMany(mappedBy = "shoppingCart")
     private List<ShoppingCartItem> items;
