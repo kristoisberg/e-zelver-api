@@ -26,15 +26,23 @@ public class ShoppingCartService {
     public ShoppingCart createShoppingCart() {
         Customer customer = customerService.fetchCustomerById(authenticationService.getCustomerId());
         ShoppingCart shoppingCart = new ShoppingCart(customer, 0);
-        return shoppingCartRepository.save(shoppingCart);
+        ShoppingCart result = shoppingCartRepository.save(shoppingCart);
+        result.getCustomer().setShoppingCarts(null);
+        result.getItems().forEach(item -> item.setShoppingCart(null));
+        return result;
     }
 
     public ShoppingCart getShoppingCartById(int shoppingCartId) {
-        return shoppingCartRepository.getById(shoppingCartId);
+        ShoppingCart result = shoppingCartRepository.getById(shoppingCartId);
+        result.getCustomer().setShoppingCarts(null);
+        result.getItems().forEach(item -> item.setShoppingCart(null));
+        return result;
     }
 
     public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) {
-        return shoppingCartItemRepository.findByShoppingCartId(shoppingCartId);
+        List<ShoppingCartItem> result = shoppingCartItemRepository.findByShoppingCartId(shoppingCartId);
+        result.forEach(item -> item.setShoppingCart(null));
+        return result;
     }
 
     public ShoppingCart addItem(int shoppingCartId, int productEntryId, int quantity) {
@@ -44,6 +52,8 @@ public class ShoppingCartService {
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
         shoppingCart.getItems().add(result);
         calculateShoppingCartAmount(shoppingCart);
+        shoppingCart.getCustomer().setShoppingCarts(null);
+        shoppingCart.getItems().forEach(item -> item.setShoppingCart(null));
         return shoppingCart;
     }
 
