@@ -26,9 +26,9 @@ public class ShoppingCartItem {
     public ShoppingCartItem() {
     }
 
-    public ShoppingCartItem(int shoppingCartId, int productEntryId, int quantity) {
-        this.shoppingCartId = shoppingCartId;
-        this.productEntryId = productEntryId;
+    public ShoppingCartItem(ShoppingCart shoppingCart, ProductEntry productEntry, int quantity) {
+        this.shoppingCart = shoppingCart;
+        this.productEntry = productEntry;
         this.quantity = quantity;
     }
 

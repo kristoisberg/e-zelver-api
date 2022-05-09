@@ -21,6 +21,7 @@ public class ShoppingCartService {
     private final CustomerService customerService;
     private final DigitalStoreService digitalStoreService;
     private final FinancialService financialService;
+    private final WarehouseService warehouseService;
     private final AuthenticationService authenticationService;
 
     public ShoppingCart createShoppingCart() {
@@ -46,12 +47,13 @@ public class ShoppingCartService {
     }
 
     public ShoppingCart addItem(int shoppingCartId, int productEntryId, int quantity) {
-        ShoppingCartItem shoppingCartItem = new ShoppingCartItem(shoppingCartId, productEntryId, quantity);
+        ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
+        ProductEntry productEntry = warehouseService.fetchProductById(productEntryId);
+        ShoppingCartItem shoppingCartItem = new ShoppingCartItem(shoppingCart, productEntry, quantity);
         ShoppingCartItem result = shoppingCartItemRepository.save(shoppingCartItem);
 
-        ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
         shoppingCart.getItems().add(result);
-        calculateShoppingCartAmount(shoppingCart);
+        //calculateShoppingCartAmount(shoppingCart);
         shoppingCart.getCustomer().setShoppingCarts(null);
         shoppingCart.getItems().forEach(item -> item.setShoppingCart(null));
         return shoppingCart;
@@ -59,7 +61,7 @@ public class ShoppingCartService {
 
     public void purchase(int shoppingCartId, String deliveryLocation) {
         ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
-        calculateShoppingCartAmount(shoppingCart);
+        //calculateShoppingCartAmount(shoppingCart);
         // todo: BPB stuff
         digitalStoreService.createOrder("BPB", deliveryLocation, 420, new Date()); // todo status, price, date
         financialService.createPayment(shoppingCart.getAmount());
@@ -75,11 +77,11 @@ public class ShoppingCartService {
         return customerId.equals(shoppingCart.getCustomerId());
     }
 
-    private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {
+    /*private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {
         int amount = shoppingCart.getItems().stream()
                 .map(ShoppingCartItem::getProductEntry)
                 .map(ProductEntry::getId) // todo: tegelikult peaks amount olema?
                 .reduce(0, Integer::sum);
         shoppingCart.setAmount(amount);
-    }
+    }*/
 }
