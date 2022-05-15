@@ -1,5 +1,7 @@
 package ee.cs.ut.esi.ezelver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -8,19 +10,28 @@ import java.util.Date;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private int id;
+
     @Column(name = "status")
     private String status;
+
     @Column(name = "deliveryLocation")
     private String deliveryLocation;
+
     @Column(name = "deliveryPrice")
     private int deliveryPrice;
+
     @Column(name = "deliveryTime")
     private Date deliveryTime;
+
     @Column(name = "feedback")
     private String feedback;
+
+    @OneToOne(mappedBy = "order")
+    @JsonIgnoreProperties({"order"})
+    private ShoppingCart shoppingCart;
 
     public Order(String status, String deliveryLocation, int deliveryPrice, Date deliveryTime, String feedback) {
         this.status = status;
@@ -79,5 +90,13 @@ public class Order {
 
     public void setFeedback(String feedback) {
         this.feedback = feedback;
+    }
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+
+    public void setShoppingCart(ShoppingCart shoppingCart) {
+        this.shoppingCart = shoppingCart;
     }
 }

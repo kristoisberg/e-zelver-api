@@ -1,25 +1,30 @@
 package ee.cs.ut.esi.ezelver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ezelver_shopping_cart_item")
 public class ShoppingCartItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cartItem_id")
     private int id;
-    @Column(name = "cart_id", insertable = false, updatable = false)
-    private int shoppingCartId;
+
     @ManyToOne
-    @JoinColumn(name="cart_id", nullable = false)
+    @JoinColumn(name = "cart_id", nullable = false)
+    @JsonIgnore
     private ShoppingCart shoppingCart;
-    @Column(name = "product_entry_id", insertable = false, updatable = false)
-    private int productEntryId;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "product_entry_id", nullable = false)
     private ProductEntry productEntry;
+
+    @NotNull
     @Column(name = "quantity")
     private int quantity;
 
@@ -40,28 +45,12 @@ public class ShoppingCartItem {
         this.id = id;
     }
 
-    public int getShoppingCartId() {
-        return shoppingCartId;
-    }
-
-    public void setShoppingCartId(int shoppingCartId) {
-        this.shoppingCartId = shoppingCartId;
-    }
-
     public ShoppingCart getShoppingCart() {
         return shoppingCart;
     }
 
     public void setShoppingCart(ShoppingCart shoppingCart) {
         this.shoppingCart = shoppingCart;
-    }
-
-    public int getProductEntryId() {
-        return productEntryId;
-    }
-
-    public void setProductEntryId(int productEntryId) {
-        this.productEntryId = productEntryId;
     }
 
     public ProductEntry getProductEntry() {

@@ -1,11 +1,13 @@
 package ee.cs.ut.esi.ezelver.service;
 
+import ee.cs.ut.esi.ezelver.exception.NotFoundException;
 import ee.cs.ut.esi.ezelver.model.ProductEntry;
 import ee.cs.ut.esi.ezelver.repository.ProductEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,10 @@ public class WarehouseService {
     }
 
     public ProductEntry fetchProductById(int productId) {
-        return productEntryRepository.getById(productId);
+        Optional<ProductEntry> product = productEntryRepository.findById(productId);
+        if (product.isEmpty())
+            throw new NotFoundException("Product not found with this ID.");
+        return product.get();
     }
 
     public List<ProductEntry> fetchProductsByType(String productType) {

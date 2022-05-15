@@ -2,24 +2,26 @@ package ee.cs.ut.esi.ezelver.service;
 
 import ee.cs.ut.esi.bpb.service.DeliveryOrderService;
 import ee.cs.ut.esi.ezelver.auth.AuthenticationService;
-import ee.cs.ut.esi.ezelver.model.Customer;
-import ee.cs.ut.esi.ezelver.model.ProductEntry;
-import ee.cs.ut.esi.ezelver.model.ShoppingCart;
-import ee.cs.ut.esi.ezelver.model.ShoppingCartItem;
+import ee.cs.ut.esi.ezelver.exception.BusinessException;
+import ee.cs.ut.esi.ezelver.model.*;
+import ee.cs.ut.esi.ezelver.repository.ProductEntryRepository;
 import ee.cs.ut.esi.ezelver.repository.ShoppingCartItemRepository;
 import ee.cs.ut.esi.ezelver.repository.ShoppingCartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartItemRepository shoppingCartItemRepository;
-    private final CustomerService customerService;
+    private final ProductEntryRepository productEntryRepository;
+    private final UserService userService;
     private final DigitalStoreService digitalStoreService;
     private final FinancialService financialService;
     private final WarehouseService warehouseService;
@@ -27,60 +29,88 @@ public class ShoppingCartService {
     private final DeliveryOrderService deliveryOrderService;
 
     public ShoppingCart createShoppingCart() {
-        Customer customer = customerService.fetchCustomerById(authenticationService.getCustomerId());
-        ShoppingCart shoppingCart = new ShoppingCart(customer, 0);
-        ShoppingCart result = shoppingCartRepository.save(shoppingCart);
-        return result;
+        Optional<Customer> customer = userService.fetchCustomerById(authenticationService.getUserId());
+        ShoppingCart shoppingCart = new ShoppingCart(customer.get(), 0);
+        return shoppingCartRepository.save(shoppingCart);
     }
 
-    public ShoppingCart getShoppingCartById(int shoppingCartId) {
-        ShoppingCart result = shoppingCartRepository.getById(shoppingCartId);
-        return result;
+    public ShoppingCart fetchShoppingCartById(int shoppingCartId) {
+        Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findById(shoppingCartId);
+
+        if (shoppingCart.isEmpty())
+            throw new NotFoundException("Shopping cart not found with this ID");
+
+        return shoppingCart.get();
     }
 
-    public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) {
+    public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) { // TODO: Is this clear all shopping cart items?
         List<ShoppingCartItem> result = shoppingCartItemRepository.findByShoppingCartId(shoppingCartId);
         result.forEach(item -> item.setShoppingCart(null));
         return result;
     }
 
     public ShoppingCart addItem(int shoppingCartId, int productEntryId, int quantity) {
-        ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
+        ShoppingCart shoppingCart = fetchShoppingCartById(shoppingCartId);
         ProductEntry productEntry = warehouseService.fetchProductById(productEntryId);
+
+        if (shoppingCart.getOrder() != null) {
+            throw new BusinessException("Shopping cart is already processed.");
+        } else if (productEntry.getQuantity() <= 0) {
+            throw new BusinessException("Item is out of stock.");
+        } else if (quantity > productEntry.getQuantity()) {
+            throw new BusinessException("Quantity is larger than stock.");
+        }
+
         ShoppingCartItem shoppingCartItem = new ShoppingCartItem(shoppingCart, productEntry, quantity);
         shoppingCartItemRepository.save(shoppingCartItem);
 
-        //calculateShoppingCartAmount(shoppingCart);
-        shoppingCart.getCustomer().setShoppingCarts(null);
-        shoppingCart.getItems().forEach(item -> item.setShoppingCart(null));
-        return shoppingCart;
+        calculateShoppingCartAmount(shoppingCart);
+
+        productEntry.setQuantity(productEntry.getQuantity() - quantity);
+        productEntryRepository.save(productEntry);
+
+        return shoppingCartRepository.save(shoppingCart);
     }
 
     public void purchase(int shoppingCartId, String deliveryLocation) {
-        ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
-        //calculateShoppingCartAmount(shoppingCart);
+        ShoppingCart shoppingCart = fetchShoppingCartById(shoppingCartId);
+        calculateShoppingCartAmount(shoppingCart);
+
+        if (shoppingCart.getItems().size() == 0) {
+            throw new BusinessException("Shopping cart is empty!");
+        } else if (shoppingCart.getOrder() != null) {
+            throw new BusinessException("Order has already been made.");
+        }
+
         String status = deliveryOrderService.getStatus(shoppingCart);
         int deliveryPrice = deliveryOrderService.getDeliveryPrice(shoppingCart);
         Date deliveryDate = deliveryOrderService.getDeliveryDate();
-        digitalStoreService.createOrder(status, deliveryLocation, deliveryPrice, deliveryDate);
+
+        Order order = digitalStoreService.createOrder(status, deliveryLocation, deliveryPrice, deliveryDate);
+        shoppingCart.setOrder(order);
+        shoppingCartRepository.save(shoppingCart);
+
         financialService.createPayment(shoppingCart.getAmount());
     }
 
     public boolean canAccessShoppingCart(int shoppingCartId) {
-        Integer customerId = authenticationService.getCustomerId();
-        if (customerId == null) {
+        Integer userId = authenticationService.getUserId();
+        if (userId == null) {
             return false;
         }
 
-        ShoppingCart shoppingCart = shoppingCartRepository.getById(shoppingCartId);
-        return customerId.equals(shoppingCart.getCustomer().getId());
+        Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findById(shoppingCartId);
+        if (shoppingCart.isEmpty()) {
+            return false;
+        }
+
+        return userId.equals(shoppingCart.get().getCustomer().getId());
     }
 
-    /*private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {
-        int amount = shoppingCart.getItems().stream()
-                .map(ShoppingCartItem::getProductEntry)
-                .map(ProductEntry::getId) // todo: tegelikult peaks amount olema?
-                .reduce(0, Integer::sum);
+    private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {
+        float amount = shoppingCart.getItems().stream()
+                .map(item -> item.getProductEntry().getPrice() * item.getQuantity())
+                .reduce(0.0F, Float::sum);
         shoppingCart.setAmount(amount);
-    }*/
+    }
 }

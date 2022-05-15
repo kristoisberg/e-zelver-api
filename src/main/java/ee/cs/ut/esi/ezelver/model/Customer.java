@@ -1,36 +1,28 @@
 package ee.cs.ut.esi.ezelver.model;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Table(name = "ezelver_customer")
-public class Customer {
+@DiscriminatorValue("customer")
+public class Customer extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "customer_id")
-    private int id;
     @OneToMany(mappedBy = "customer")
-    private List<ShoppingCart> shoppingCarts;
-    @Column(name = "name")
-    private String name;
+    private List<ShoppingCart> shoppingCarts = new ArrayList<>();
+
+    @NotNull
     @Column(name = "age")
     private int age;
 
-    public Customer(String name, int age) {
-        this.name = name;
+    public Customer(String email, String password, String name, int age) {
+        super(email, password, name);
         this.age = age;
     }
 
     public Customer() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public List<ShoppingCart> getShoppingCarts() {
@@ -41,14 +33,6 @@ public class Customer {
         this.shoppingCarts = shoppingCarts;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getAge() {
         return age;
     }
@@ -56,4 +40,10 @@ public class Customer {
     public void setAge(int age) {
         this.age = age;
     }
+
+    @Override
+    public List<Role> getRoles() {
+        return Collections.singletonList(Role.CUSTOMER);
+    }
+
 }

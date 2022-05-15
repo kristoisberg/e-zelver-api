@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component
@@ -52,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private Authentication getAuthentication(JwtContext context, String token) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                context.getCustomerId(),
+                context.getUserId(),
                 null,
                 context.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toList())
         );

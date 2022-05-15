@@ -1,43 +1,24 @@
 package ee.cs.ut.esi.ezelver.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
-@Table(name = "ezelver_employee")
-public class Employee {
+@DiscriminatorValue("employee")
+public class Employee extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "employee_id")
-    private int id;
-    @Column(name = "name")
-    private String name;
     @Column(name = "position")
     private String position;
 
-    public Employee(String name, String position) {
-        this.name = name;
+    public Employee(String email, String password, String name, String position) {
+        super(email, password, name);
         this.position = position;
     }
 
     public Employee() {
-
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPosition() {
@@ -47,4 +28,10 @@ public class Employee {
     public void setPosition(String position) {
         this.position = position;
     }
+
+    @Override
+    public List<Role> getRoles() {
+        return Collections.singletonList(Role.EMPLOYEE);
+    }
+
 }

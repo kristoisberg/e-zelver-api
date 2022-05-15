@@ -1,8 +1,10 @@
 package ee.cs.ut.esi.ezelver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -10,17 +12,29 @@ import java.util.List;
 public class ShoppingCart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_id")
     private int id;
+
     @ManyToOne
-    @JoinColumn(name="customer_id", nullable = false)
-    @JsonIgnoreProperties({"shoppingCarts", "hibernateLazyInitializer"})
+    @JoinColumn(name = "customer_id", nullable = false)
+    @JsonIgnoreProperties({"shoppingCarts"})
     private Customer customer;
+
     @OneToMany(mappedBy = "shoppingCart")
-    private List<ShoppingCartItem> items;
+    private List<ShoppingCartItem> items = new ArrayList<>();
+
     @Column(name = "amount")
-    private int amount;
+    private float amount;
+
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    @JsonIgnore
+    private Store store;
 
     public ShoppingCart(Customer customer, int amount) {
         this.customer = customer;
@@ -54,11 +68,19 @@ public class ShoppingCart {
         this.items = items;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

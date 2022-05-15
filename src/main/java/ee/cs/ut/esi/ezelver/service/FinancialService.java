@@ -16,7 +16,7 @@ public class FinancialService {
         return paymentRepository.getById(paymentId);
     }
 
-    public Payment createPayment(int amount) {
+    public Payment createPayment(float amount) {
         Payment payment = new Payment(new Date(), amount);
         return paymentRepository.save(payment);
     }

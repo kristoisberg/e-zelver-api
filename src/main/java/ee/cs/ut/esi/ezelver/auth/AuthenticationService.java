@@ -1,6 +1,6 @@
 package ee.cs.ut.esi.ezelver.auth;
 
 public interface AuthenticationService {
-    Integer getCustomerId();
+    Integer getUserId();
     String getName();
 }
