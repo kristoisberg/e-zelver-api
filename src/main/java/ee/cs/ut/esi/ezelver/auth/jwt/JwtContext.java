@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 public class JwtContext {
-    private Integer customerId;
+    private Integer userId;
     private String name;
     private List<String> roles;
     private Date expiryTime;

@@ -1,17 +1,21 @@
 package ee.cs.ut.esi.ezelver.controller;
 
-import ee.cs.ut.esi.ezelver.auth.AuthenticationService;
+import ee.cs.ut.esi.ezelver.exception.BusinessException;
 import ee.cs.ut.esi.ezelver.model.ShoppingCart;
 import ee.cs.ut.esi.ezelver.model.ShoppingCartItem;
 import ee.cs.ut.esi.ezelver.service.ShoppingCartService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -29,13 +33,17 @@ public class ShoppingCartController {
     @GetMapping("/{shoppingCartId}")
     @PreAuthorize("@shoppingCartService.canAccessShoppingCart(#shoppingCartId)")
     public ResponseEntity<ShoppingCart> getShoppingCart(@PathVariable int shoppingCartId) {
-        return ResponseEntity.ok(shoppingCartService.getShoppingCartById(shoppingCartId));
+        return ResponseEntity.ok(shoppingCartService.fetchShoppingCartById(shoppingCartId));
     }
 
     @PutMapping("/{shoppingCartId}")
     @PreAuthorize("@shoppingCartService.canAccessShoppingCart(#shoppingCartId)")
     public ResponseEntity<?> purchaseShoppingCart(@PathVariable int shoppingCartId,
-                                                  @RequestBody PurchaseRequestDto dto) {
+                                                  @RequestBody @Valid PurchaseRequestDto dto,
+                                                  @Parameter(hidden = true) BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            throw new BusinessException("Delivery location is not specified.");
+
         shoppingCartService.purchase(shoppingCartId, dto.getDeliveryLocation());
         return ResponseEntity.ok(null);
     }
@@ -49,15 +57,20 @@ public class ShoppingCartController {
     @PutMapping("/{shoppingCartId}/items")
     @PreAuthorize("@shoppingCartService.canAccessShoppingCart(#shoppingCartId)")
     public ResponseEntity<ShoppingCart> addItem(@PathVariable int shoppingCartId,
-                                                @RequestBody ShoppingCartItem shoppingCartItem) {
+                                                @RequestBody @Valid ShoppingCartItem shoppingCartItem,
+                                                @Parameter(hidden = true) BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            throw new BusinessException("Shopping cart item has wrong parameters.");
+
         return ResponseEntity.ok(shoppingCartService.addItem(
-                shoppingCartId, shoppingCartItem.getProductEntryId(), shoppingCartItem.getQuantity()));
+                shoppingCartId, shoppingCartItem.getProductEntry().getId(), shoppingCartItem.getQuantity()));
     }
 
     @NoArgsConstructor
     @Getter
     @Setter
     static class PurchaseRequestDto {
+        @NotNull
         private String deliveryLocation;
     }
 }

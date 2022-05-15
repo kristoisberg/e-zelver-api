@@ -1,5 +1,6 @@
 package ee.cs.ut.esi.ezelver.auth.jwt;
 
+import ee.cs.ut.esi.ezelver.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtHandler {
@@ -41,11 +42,11 @@ public class JwtHandler {
         );
     }
 
-    public JwtContext create(Integer customerId, String name, String role) {
+    public JwtContext create(Integer customerId, String name, List<Role> roles) {
         return new JwtContext(
                 customerId,
                 name,
-                Collections.singletonList(role),
+                roles.stream().map(Enum::name).collect(Collectors.toList()),
                 DateUtils.addHours(new Date(), jwtLifetimeHours)
         );
     }
@@ -55,7 +56,7 @@ public class JwtHandler {
                 .setSubject(context.getName())
                 .setExpiration(context.getExpiryTime())
                 .setIssuedAt(new Date())
-                .claim("id", context.getCustomerId())
+                .claim("id", context.getUserId())
                 .claim("name", context.getName())
                 .claim("roles", context.getRoles())
                 .signWith(getKey())

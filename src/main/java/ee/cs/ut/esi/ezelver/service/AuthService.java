@@ -5,55 +5,55 @@ import ee.cs.ut.esi.ezelver.auth.jwt.JwtHandler;
 import ee.cs.ut.esi.ezelver.exception.BusinessException;
 import ee.cs.ut.esi.ezelver.model.Customer;
 import ee.cs.ut.esi.ezelver.model.Employee;
-import ee.cs.ut.esi.ezelver.model.Role;
+import ee.cs.ut.esi.ezelver.model.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final CustomerService customerService;
-    private final EmployeeService employeeService;
+    private final UserService userService;
     private final JwtHandler jwtHandler;
 
-    public String login(String name) {
-        Customer customer = customerService.fetchCustomerByName(name);
-        if (customer == null) {
+    public String login(String email, String password) {
+        Optional<User> user = userService.fetchUserByEmail(email);
+
+        if (user.isEmpty()) {
             throw new BusinessException("Account does not exist!");
+        } else if (!new BCryptPasswordEncoder().matches(password, user.get().getPassword())) {
+            throw new BusinessException("Password is incorrect!");
         }
 
-        JwtContext jwtContext = jwtHandler.create(customer.getId(), customer.getName(), Role.CUSTOMER.name());
+        JwtContext jwtContext = jwtHandler.create(user.get().getId(), user.get().getName(), user.get().getRoles());
         return jwtHandler.encode(jwtContext);
     }
 
-    public String register(String name, int age) {
-        Customer customer = customerService.fetchCustomerByName(name);
-        if (customer != null) {
+    public String registerCustomer(String email, String password, String name, int age) {
+        if (userService.fetchUserByEmail(email).isPresent()) {
             throw new BusinessException("Account name already exists!");
         }
 
-        Customer createdCustomer = customerService.createCustomer(name, age);
-        JwtContext jwtContext = jwtHandler.create(createdCustomer.getId(), createdCustomer.getName(), Role.CUSTOMER.name());
+        password = new BCryptPasswordEncoder().encode(password);
+        Customer createdCustomer = userService.createCustomer(email, password, name, age);
+        JwtContext jwtContext = jwtHandler.create(createdCustomer.getId(), createdCustomer.getName(), createdCustomer.getRoles());
         return jwtHandler.encode(jwtContext);
     }
 
-    public String loginEmployee(String name) {
-        Employee employee = employeeService.fetchEmployeeByName(name);
-        if (employee == null) {
-            throw new BusinessException("Account does not exist!");
-        }
-
-        JwtContext jwtContext = jwtHandler.create(employee.getId(), employee.getName(), Role.EMPLOYEE.name());
-        return jwtHandler.encode(jwtContext);
-    }
-
-    public String registerEmployee(String name, String position) {
-        Employee customer = employeeService.fetchEmployeeByName(name);
-        if (customer != null) {
+    public String registerEmployee(String email, String password, String name, String position) {
+        if (userService.fetchUserByEmail(email).isPresent()) {
             throw new BusinessException("Account name already exists!");
         }
-        Employee createdEmployee = employeeService.createEmployee(name, position);
-        JwtContext jwtContext = jwtHandler.create(createdEmployee.getId(), createdEmployee.getName(), Role.EMPLOYEE.name());
+
+        password = new BCryptPasswordEncoder().encode(password);
+        Employee createdEmployee = userService.createEmployee(email, password, name, position);
+        JwtContext jwtContext = jwtHandler.create(createdEmployee.getId(), createdEmployee.getName(), createdEmployee.getRoles());
         return jwtHandler.encode(jwtContext);
+    }
+
+    public User getCurrentUser(Integer id) {
+        return userService.fetchUserById(id).get();
     }
 }

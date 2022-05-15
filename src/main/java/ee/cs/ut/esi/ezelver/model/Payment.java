@@ -8,15 +8,17 @@ import java.util.Date;
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
     private int id;
+
     @Column(name = "paymentDate")
     private Date paymentDate;
-    @Column(name = "amount")
-    private int amount;
 
-    public Payment(Date paymentDate, int amount) {
+    @Column(name = "amount")
+    private float amount;
+
+    public Payment(Date paymentDate, float amount) {
         this.paymentDate = paymentDate;
         this.amount = amount;
     }
@@ -40,11 +42,11 @@ public class Payment {
         this.paymentDate = paymentDate;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 }
