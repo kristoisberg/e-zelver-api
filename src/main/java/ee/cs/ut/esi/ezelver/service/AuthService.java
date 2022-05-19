@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -18,7 +19,7 @@ public class AuthService {
     private final UserService userService;
     private final JwtHandler jwtHandler;
 
-    public String login(String email, String password) {
+    public Map<String, Object> login(String email, String password) {
         Optional<User> user = userService.fetchUserByEmail(email);
 
         if (user.isEmpty()) {
@@ -28,10 +29,10 @@ public class AuthService {
         }
 
         JwtContext jwtContext = jwtHandler.create(user.get().getId(), user.get().getName(), user.get().getRoles());
-        return jwtHandler.encode(jwtContext);
+        return Map.of("jwt", jwtHandler.encode(jwtContext), "user", user);
     }
 
-    public String registerCustomer(String email, String password, String name, int age) {
+    public Map<String, Object> registerCustomer(String email, String password, String name, int age) {
         if (userService.fetchUserByEmail(email).isPresent()) {
             throw new BusinessException("Account name already exists!");
         }
@@ -39,10 +40,10 @@ public class AuthService {
         password = new BCryptPasswordEncoder().encode(password);
         Customer createdCustomer = userService.createCustomer(email, password, name, age);
         JwtContext jwtContext = jwtHandler.create(createdCustomer.getId(), createdCustomer.getName(), createdCustomer.getRoles());
-        return jwtHandler.encode(jwtContext);
+        return Map.of("jwt", jwtHandler.encode(jwtContext), "user", createdCustomer);
     }
 
-    public String registerEmployee(String email, String password, String name, String position) {
+    public Map<String, Object> registerEmployee(String email, String password, String name, String position) {
         if (userService.fetchUserByEmail(email).isPresent()) {
             throw new BusinessException("Account name already exists!");
         }
@@ -50,7 +51,7 @@ public class AuthService {
         password = new BCryptPasswordEncoder().encode(password);
         Employee createdEmployee = userService.createEmployee(email, password, name, position);
         JwtContext jwtContext = jwtHandler.create(createdEmployee.getId(), createdEmployee.getName(), createdEmployee.getRoles());
-        return jwtHandler.encode(jwtContext);
+        return Map.of("jwt", jwtHandler.encode(jwtContext), "user", createdEmployee);
     }
 
     public User getCurrentUser(Integer id) {

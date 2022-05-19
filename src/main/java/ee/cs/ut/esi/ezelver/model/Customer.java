@@ -1,5 +1,7 @@
 package ee.cs.ut.esi.ezelver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
 public class Customer extends User {
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<ShoppingCart> shoppingCarts = new ArrayList<>();
 
     @NotNull

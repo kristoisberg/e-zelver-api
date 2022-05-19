@@ -7,10 +7,7 @@ import ee.cs.ut.esi.ezelver.model.Employee;
 import ee.cs.ut.esi.ezelver.model.User;
 import ee.cs.ut.esi.ezelver.service.AuthService;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +29,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto request, @Parameter(hidden = true) BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             throw new BusinessException("Request body needs to have email and password!");
-
-        return ResponseEntity.ok(Map.of("jwt", authService.login(request.getEmail(), request.getPassword())));
+        return ResponseEntity.ok(authService.login(request.getEmail(), request.getPassword()));
     }
 
     @PostMapping("/api/auth/customers/register")
@@ -41,7 +37,7 @@ public class AuthController {
         if (bindingResult.hasErrors())
             throw new BusinessException("Incorrect customer parameters!");
 
-        return ResponseEntity.ok(Map.of("jwt", authService.registerCustomer(customer.getEmail(), customer.getPassword(), customer.getName(), customer.getAge())));
+        return ResponseEntity.ok(authService.registerCustomer(customer.getEmail(), customer.getPassword(), customer.getName(), customer.getAge()));
     }
 
     @PostMapping("/api/auth/employees/register")
@@ -49,7 +45,7 @@ public class AuthController {
         if (bindingResult.hasErrors())
             throw new BusinessException("Incorrect employee parameters!");
 
-        return ResponseEntity.ok(Map.of("jwt", authService.registerEmployee(employee.getEmail(), employee.getPassword(), employee.getName(), employee.getPosition())));
+        return ResponseEntity.ok(authService.registerEmployee(employee.getEmail(), employee.getPassword(), employee.getName(), employee.getPosition()));
     }
 
     @GetMapping("/api/auth/current")
@@ -65,5 +61,11 @@ public class AuthController {
         private String email;
         @NotNull
         private String password;
+    }
+
+    @AllArgsConstructor
+    static class LoginResponseDto {
+        private String jwt;
+        private User user;
     }
 }
