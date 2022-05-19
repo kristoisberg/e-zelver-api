@@ -30,6 +30,12 @@ public class ShoppingCartController {
         return ResponseEntity.ok(shoppingCartService.createShoppingCart());
     }
 
+    @GetMapping("/get")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    public ResponseEntity<ShoppingCart> getOrCreateShoppingCart() {
+        return ResponseEntity.ok(shoppingCartService.getOrCreateShoppingCart());
+    }
+
     @GetMapping("/{shoppingCartId}")
     @PreAuthorize("@shoppingCartService.canAccessShoppingCart(#shoppingCartId)")
     public ResponseEntity<ShoppingCart> getShoppingCart(@PathVariable int shoppingCartId) {

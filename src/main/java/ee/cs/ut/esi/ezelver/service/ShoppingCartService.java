@@ -30,8 +30,22 @@ public class ShoppingCartService {
 
     public ShoppingCart createShoppingCart() {
         Optional<Customer> customer = userService.fetchCustomerById(authenticationService.getUserId());
+
+        if (customer.isEmpty())
+            throw new BusinessException("User doesn't exist for shopping cart creation.");
+
         ShoppingCart shoppingCart = new ShoppingCart(customer.get(), 0);
         return shoppingCartRepository.save(shoppingCart);
+    }
+
+    public ShoppingCart getOrCreateShoppingCart() {
+        Optional<Customer> customer = userService.fetchCustomerById(authenticationService.getUserId());
+
+        if (customer.isEmpty())
+            throw new BusinessException("User doesn't exist for shopping cart creation.");
+
+        Optional<ShoppingCart> shoppingCart = customer.get().getShoppingCarts().stream().filter(sc -> sc.getOrder() == null).findFirst();
+        return shoppingCart.orElseGet(this::createShoppingCart);
     }
 
     public ShoppingCart fetchShoppingCartById(int shoppingCartId) {
