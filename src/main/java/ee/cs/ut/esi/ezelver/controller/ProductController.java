@@ -20,6 +20,7 @@ public class ProductController {
     private final WarehouseService warehouseService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
     public ResponseEntity<List<ProductEntry>> getAllProducts() {
         return ResponseEntity.ok(warehouseService.fetchAllProducts());
     }
