@@ -101,7 +101,8 @@ public class ShoppingCartService {
             throw new BusinessException("Item does not belong to shopping cart.");
         }
 
-        int newRemainingQuantity = productEntry.getQuantity() + productEntry.getQuantity() - quantity;
+        ProductEntry productEntry = shoppingCartItem.getProductEntry();
+        int newRemainingQuantity = productEntry.getQuantity() + shoppingCartItem.getQuantity() - quantity;
         if (newRemainingQuantity < 0) {
             throw new BusinessException("Quantity is larger than stock.");
         }
