@@ -77,7 +77,7 @@ public class ShoppingCartService {
             throw new BusinessException("Shopping cart is already processed.");
         }
 
-        if (!shoppingCart.getId().equals(shoppingCartItem.getShoppingCart().getId())) {
+        if (shoppingCart.getId() != shoppingCartItem.getShoppingCart().getId()) {
             throw new BusinessException("Item does not belong to shopping cart.");
         }
 
@@ -99,7 +99,7 @@ public class ShoppingCartService {
             throw new BusinessException("Shopping cart is already processed.");
         }
 
-        if (!shoppingCart.getId().equals(shoppingCartItem.getShoppingCart().getId())) {
+        if (shoppingCart.getId() != shoppingCartItem.getShoppingCart().getId()) {
             throw new BusinessException("Item does not belong to shopping cart.");
         }
 
