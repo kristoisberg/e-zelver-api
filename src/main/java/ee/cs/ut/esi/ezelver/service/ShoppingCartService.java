@@ -8,6 +8,7 @@ import ee.cs.ut.esi.ezelver.repository.ProductEntryRepository;
 import ee.cs.ut.esi.ezelver.repository.ShoppingCartItemRepository;
 import ee.cs.ut.esi.ezelver.repository.ShoppingCartRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.webjars.NotFoundException;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartItemRepository shoppingCartItemRepository;
@@ -172,15 +174,22 @@ public class ShoppingCartService {
     public boolean canAccessShoppingCart(int shoppingCartId) {
         Integer userId = authenticationService.getUserId();
         if (userId == null) {
+            log.info("User ID is null.");
             return false;
         }
 
         Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findById(shoppingCartId);
         if (shoppingCart.isEmpty()) {
+            log.info("Shopping cart was not found.");
             return false;
         }
 
-        return userId.equals(shoppingCart.get().getCustomer().getId());
+        if (!userId.equals(shoppingCart.get().getCustomer().getId())) {
+            log.info("Shopping cart does not belong to the logged in user.");
+            return false;
+        }
+
+        return true;
     }
 
     private void calculateShoppingCartAmount(ShoppingCart shoppingCart) {
