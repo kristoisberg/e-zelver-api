@@ -89,7 +89,7 @@ public class ShoppingCartService {
         productEntryRepository.save(productEntry);
 
         shoppingCart.setItems(shoppingCart.getItems().stream()
-                .filter(item -> !item.getId().equals(cartItemId))
+                .filter(item -> item.getId() != cartItemId)
                 .collect(Collectors.toList()));
         return shoppingCart;
     }
@@ -119,7 +119,7 @@ public class ShoppingCartService {
         productEntryRepository.save(productEntry);
 
         shoppingCart.getItems().stream()
-                .filter(item -> item.getId().equals(cartItemId))
+                .filter(item -> item.getId() == cartItemId)
                 .forEach(item -> item.setQuantity(quantity));
         return shoppingCart;
     }
