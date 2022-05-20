@@ -9,6 +9,7 @@ import ee.cs.ut.esi.ezelver.repository.ShoppingCartItemRepository;
 import ee.cs.ut.esi.ezelver.repository.ShoppingCartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.webjars.NotFoundException;
 
 import java.util.Date;
@@ -55,6 +56,30 @@ public class ShoppingCartService {
             throw new NotFoundException("Shopping cart not found with this ID");
 
         return shoppingCart.get();
+    }
+
+    public ShoppingCartItem fetchShoppingCartItemById(int shoppingCartItemId) {
+        Optional<ShoppingCartItem> shoppingCartItem = shoppingCartItemRepository.findById(shoppingCartItemId);
+
+        if (shoppingCartItem.isEmpty())
+            throw new NotFoundException("Shopping cart item not found with this ID");
+
+        return shoppingCartItem.get();
+    }
+
+    public void deleteShoppingCartItem(int shoppingCartId, int cartItemId){
+        ShoppingCart shoppingCart = fetchShoppingCartById(shoppingCartId);
+        ShoppingCartItem shoppingCartItem = fetchShoppingCartItemById(cartItemId);
+
+        if (shoppingCart.getOrder() != null) {
+            throw new BusinessException("Shopping cart is already processed.");
+        }
+
+        ProductEntry productEntry = shoppingCartItem.getProductEntry();
+        shoppingCartItemRepository.deleteById(cartItemId);
+
+        productEntry.setQuantity(productEntry.getQuantity() + productEntry.getQuantity());
+        productEntryRepository.save(productEntry);
     }
 
     public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) { // TODO: Is this clear all shopping cart items?

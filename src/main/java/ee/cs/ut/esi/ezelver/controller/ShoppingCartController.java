@@ -72,6 +72,15 @@ public class ShoppingCartController {
                 shoppingCartId, shoppingCartItem.getProductEntry().getId(), shoppingCartItem.getQuantity()));
     }
 
+    @DeleteMapping("/{shoppingCartId}/items/{cartItemId}")
+    @PreAuthorize("@shoppingCartService.canAccessShoppingCart(#shoppingCartId)")
+    public ResponseEntity<ShoppingCart> removeItem(@PathVariable int shoppingCartId,
+                                                   @PathVariable int cartItemId) {
+        shoppingCartService.deleteShoppingCartItem(
+                shoppingCartId, cartItemId);
+        return ResponseEntity.ok(null);
+    }
+
     @NoArgsConstructor
     @Getter
     @Setter
