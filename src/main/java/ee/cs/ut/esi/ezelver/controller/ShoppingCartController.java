@@ -72,11 +72,34 @@ public class ShoppingCartController {
                 shoppingCartId, shoppingCartItem.getProductEntry().getId(), shoppingCartItem.getQuantity()));
     }
 
+    @PutMapping("/{shoppingCartId}/items/{cartItemId}")
+    @PreAuthorize("@shoppingCartService.canAccessShoppingCart(#shoppingCartId)")
+    public ResponseEntity<ShoppingCart> setItemQuantity(@PathVariable int shoppingCartId,
+                                                        @PathVariable int cartItemId,
+                                                        @RequestBody @Valid SetItemQuantityDto dto) {
+        return ResponseEntity.ok(shoppingCartService.setShoppingCartItemQuantity(
+                shoppingCartId, cartItemId, dto.getQuantity()));
+    }
+
+    @DeleteMapping("/{shoppingCartId}/items/{cartItemId}")
+    @PreAuthorize("@shoppingCartService.canAccessShoppingCart(#shoppingCartId)")
+    public ResponseEntity<ShoppingCart> removeItem(@PathVariable int shoppingCartId,
+                                                   @PathVariable int cartItemId) {
+        return ResponseEntity.ok(shoppingCartService.deleteShoppingCartItem(shoppingCartId, cartItemId));
+    }
+
     @NoArgsConstructor
     @Getter
     @Setter
     static class PurchaseRequestDto {
         @NotNull
         private String deliveryLocation;
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    static class SetItemQuantityDto {
+        private int quantity;
     }
 }
