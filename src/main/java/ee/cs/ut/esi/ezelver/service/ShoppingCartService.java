@@ -87,7 +87,7 @@ public class ShoppingCartService {
         productEntry.setQuantity(productEntry.getQuantity() + productEntry.getQuantity());
         productEntryRepository.save(productEntry);
 
-        shoppingCart.setItems(shoppingCart.getItems().filter(item -> !item.getId().equals(cartItemId));
+        shoppingCart.setItems(shoppingCart.getItems().filter(item -> !item.getId().equals(cartItemId)));
         return shoppingCart;
     }
 
