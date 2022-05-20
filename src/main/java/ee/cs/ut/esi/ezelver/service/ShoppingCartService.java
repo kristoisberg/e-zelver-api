@@ -67,7 +67,7 @@ public class ShoppingCartService {
         return shoppingCartItem.get();
     }
 
-    public void deleteShoppingCartItem(int shoppingCartId, int cartItemId){
+    public ShoppingCart deleteShoppingCartItem(int shoppingCartId, int cartItemId) {
         ShoppingCart shoppingCart = fetchShoppingCartById(shoppingCartId);
         ShoppingCartItem shoppingCartItem = fetchShoppingCartItemById(cartItemId);
 
@@ -75,11 +75,47 @@ public class ShoppingCartService {
             throw new BusinessException("Shopping cart is already processed.");
         }
 
+        if (!shoppingCart.getId().equals(shoppingCartItem.getShoppingCart().getId())) {
+            throw new BusinessException("Item does not belong to shopping cart.");
+        }
+
         ProductEntry productEntry = shoppingCartItem.getProductEntry();
         shoppingCartItemRepository.deleteById(cartItemId);
 
         productEntry.setQuantity(productEntry.getQuantity() + productEntry.getQuantity());
         productEntryRepository.save(productEntry);
+
+        shoppingCart.setItems(shoppingCart.getItems().filter(item -> !item.getId().equals(cartItemId));
+        return shoppingCart;
+    }
+
+    public ShoppingCart setShoppingCartItemQuantity(int shoppingCartId, int cartItemId, int quantity) {
+        ShoppingCart shoppingCart = fetchShoppingCartById(shoppingCartId);
+        ShoppingCartItem shoppingCartItem = fetchShoppingCartItemById(cartItemId);
+
+        if (shoppingCart.getOrder() != null) {
+            throw new BusinessException("Shopping cart is already processed.");
+        }
+
+        if (!shoppingCart.getId().equals(shoppingCartItem.getShoppingCart().getId())) {
+            throw new BusinessException("Item does not belong to shopping cart.");
+        }
+
+        int newRemainingQuantity = productEntry.getQuantity() + productEntry.getQuantity() - quantity;
+        if (newRemainingQuantity < 0) {
+            throw new BusinessException("Quantity is larger than stock.");
+        }
+
+        shoppingCartItem.setQuantity(quantity);
+        shoppingCartItemRepository.save(shoppingCartItem);
+
+        productEntry.setQuantity(newRemainingQuantity);
+        productEntryRepository.save(productEntry);
+
+        shoppingCart.getItems()
+                .filter(item -> item.getId().equals(cartItemId))
+                .forEach(item -> item.setQuantity(quantity));
+        return shoppingCart;
     }
 
     public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) { // TODO: Is this clear all shopping cart items?
