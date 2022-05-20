@@ -3,6 +3,7 @@ package ee.cs.ut.esi.ezelver.service;
 import ee.cs.ut.esi.bpb.service.DeliveryOrderService;
 import ee.cs.ut.esi.ezelver.auth.AuthenticationService;
 import ee.cs.ut.esi.ezelver.exception.BusinessException;
+import ee.cs.ut.esi.ezelver.exception.NotFoundException;
 import ee.cs.ut.esi.ezelver.model.*;
 import ee.cs.ut.esi.ezelver.repository.ProductEntryRepository;
 import ee.cs.ut.esi.ezelver.repository.ShoppingCartItemRepository;
@@ -11,11 +12,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.webjars.NotFoundException;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,7 +88,9 @@ public class ShoppingCartService {
         productEntry.setQuantity(productEntry.getQuantity() + productEntry.getQuantity());
         productEntryRepository.save(productEntry);
 
-        shoppingCart.setItems(shoppingCart.getItems().filter(item -> !item.getId().equals(cartItemId)));
+        shoppingCart.setItems(shoppingCart.getItems().stream()
+                .filter(item -> !item.getId().equals(cartItemId))
+                .collect(Collectors.toList()));
         return shoppingCart;
     }
 
@@ -115,7 +118,7 @@ public class ShoppingCartService {
         productEntry.setQuantity(newRemainingQuantity);
         productEntryRepository.save(productEntry);
 
-        shoppingCart.getItems()
+        shoppingCart.getItems().stream()
                 .filter(item -> item.getId().equals(cartItemId))
                 .forEach(item -> item.setQuantity(quantity));
         return shoppingCart;
