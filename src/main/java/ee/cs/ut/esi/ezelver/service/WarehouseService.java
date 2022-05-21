@@ -42,4 +42,7 @@ public class WarehouseService {
         }
         return productEntryRepository.save(product);
     }
+    public void deleteProduct(int productId) {
+        productEntryRepository.deleteById(productId);
+    }
 }

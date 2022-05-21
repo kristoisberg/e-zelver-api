@@ -60,4 +60,11 @@ public class ProductController {
 
         return ResponseEntity.ok(warehouseService.updateProduct(id, product));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
+    public ResponseEntity<?> deleteProduct(@PathVariable int id) {
+        warehouseService.deleteProduct(id);
+        return ResponseEntity.ok(null);
+    }
 }
