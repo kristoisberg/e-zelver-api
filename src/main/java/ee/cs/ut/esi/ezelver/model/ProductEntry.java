@@ -20,6 +20,9 @@ public class ProductEntry {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "image")
+    private String image;
+
     @NotNull
     @Column(name = "price")
     private float price;
@@ -36,9 +39,11 @@ public class ProductEntry {
     @Column(name = "dimensions")
     private String dimensions;
 
-    public ProductEntry(int quantity, String name, String type, float price, float weight, String dimensions) {
+    public ProductEntry(int quantity, String name, String image, String type, float price, float weight,
+                        String dimensions) {
         this.quantity = quantity;
         this.name = name;
+        this.image = image;
         this.type = type;
         this.price = price;
         this.weight = weight;
@@ -66,6 +71,14 @@ public class ProductEntry {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getType() {
@@ -99,5 +112,4 @@ public class ProductEntry {
     public void setDimensions(String dimensions) {
         this.dimensions = dimensions;
     }
-
 }
