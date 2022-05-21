@@ -20,6 +20,7 @@ public class ProductEntry {
     @Column(name = "name")
     private String name;
 
+    @NotNull
     @Column(name = "image")
     private String image;
 
