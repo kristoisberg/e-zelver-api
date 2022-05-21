@@ -85,7 +85,7 @@ public class ShoppingCartService {
         ProductEntry productEntry = shoppingCartItem.getProductEntry();
         shoppingCartItemRepository.deleteById(cartItemId);
 
-        productEntry.setQuantity(productEntry.getQuantity() + productEntry.getQuantity());
+        productEntry.setQuantity(productEntry.getQuantity() + shoppingCartItem.getQuantity());
         productEntryRepository.save(productEntry);
 
         shoppingCart.setItems(shoppingCart.getItems().stream()
