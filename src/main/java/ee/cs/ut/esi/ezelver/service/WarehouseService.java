@@ -1,5 +1,6 @@
 package ee.cs.ut.esi.ezelver.service;
 
+import ee.cs.ut.esi.ezelver.exception.BusinessException;
 import ee.cs.ut.esi.ezelver.exception.NotFoundException;
 import ee.cs.ut.esi.ezelver.model.ProductEntry;
 import ee.cs.ut.esi.ezelver.repository.ProductEntryRepository;
@@ -35,5 +36,10 @@ public class WarehouseService {
     public ProductEntry addProduct(ProductEntry product) {
         return productEntryRepository.save(product);
     }
-
+    public ProductEntry updateProduct(int id, ProductEntry product) {
+        if (id != product.getId()) {
+            throw new BusinessException("Invalid request.");
+        }
+        return productEntryRepository.save(product);
+    }
 }

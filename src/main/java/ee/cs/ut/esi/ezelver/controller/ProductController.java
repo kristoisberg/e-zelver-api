@@ -42,10 +42,22 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
-    public ResponseEntity<ProductEntry> addProduct(@RequestBody @Valid ProductEntry product, @Parameter(hidden = true) BindingResult bindingResult) {
+    public ResponseEntity<ProductEntry> addProduct(@RequestBody @Valid ProductEntry product,
+                                                   @Parameter(hidden = true) BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             throw new BusinessException("Incorrect product parameters!");
 
         return ResponseEntity.ok(warehouseService.addProduct(product));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
+    public ResponseEntity<ProductEntry> updateProduct(@PathVariable int id,
+                                                      @RequestBody @Valid ProductEntry product,
+                                                      @Parameter(hidden = true) BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            throw new BusinessException("Incorrect product parameters!");
+
+        return ResponseEntity.ok(warehouseService.updateProduct(id, product));
     }
 }
