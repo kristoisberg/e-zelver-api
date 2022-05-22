@@ -91,7 +91,9 @@ public class ShoppingCartService {
         shoppingCart.setItems(shoppingCart.getItems().stream()
                 .filter(item -> item.getId() != cartItemId)
                 .collect(Collectors.toList()));
-        return shoppingCart;
+        calculateShoppingCartAmount(shoppingCart);
+
+        return shoppingCartRepository.save(shoppingCart);
     }
 
     public ShoppingCart setShoppingCartItemQuantity(int shoppingCartId, int cartItemId, int quantity) {
@@ -121,13 +123,13 @@ public class ShoppingCartService {
         shoppingCart.getItems().stream()
                 .filter(item -> item.getId() == cartItemId)
                 .forEach(item -> item.setQuantity(quantity));
-        return shoppingCart;
+        calculateShoppingCartAmount(shoppingCart);
+
+        return shoppingCartRepository.save(shoppingCart);
     }
 
-    public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) { // TODO: Is this clear all shopping cart items?
-        List<ShoppingCartItem> result = shoppingCartItemRepository.findByShoppingCartId(shoppingCartId);
-        result.forEach(item -> item.setShoppingCart(null));
-        return result;
+    public List<ShoppingCartItem> getShoppingCartItems(int shoppingCartId) {
+        return shoppingCartItemRepository.findByShoppingCartId(shoppingCartId);
     }
 
     public ShoppingCart addItem(int shoppingCartId, int productEntryId, int quantity) {
